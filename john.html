@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>John - Break</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { text-align: center; padding: 50px; font-family: Arial; background: #f0f0f0; }
+    button { padding: 20px 40px; font-size: 20px; margin: 10px; border: none; border-radius: 10px; cursor: pointer; }
+    .start { background: #ff9800; color: white; }
+    .back { background: #4caf50; color: white; }
+    select { padding: 10px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>Hello John!</h1>
+  <select id="type"><option>Break</option><option>Lunch</option></select><br><br>
+  <button class="start" onclick="start()">Start Break/Lunch</button>
+  <button class="back" onclick="back()" style="display:none" id="backBtn">I'm Back</button>
+
+  <script>
+    const socket = io('https://break-alerts-server.replit.app');
+    const name = "John Doe";
+
+    function start() {
+      const type = document.getElementById('type').value.toLowerCase();
+      socket.emit('break', { name, status: 'break', type, time: new Date().toLocaleTimeString() });
+      document.querySelector('.start').style.display = 'none';
+      document.getElementById('backBtn').style.display = 'inline-block';
+    }
+
+    function back() {
+      socket.emit('break', { name, status: 'back', type: '', time: new Date().toLocaleTimeString() });
+      document.querySelector('.start').style.display = 'inline-block';
+      document.getElementById('backBtn').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
