@@ -2,14 +2,12 @@
 <html>
 <head>
   <title>Break Alerts</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <style>
-    body { font-family: Arial; background: #f9f9f9; padding: 20px; }
-    .alert { padding: 15px; margin: 10px 0; border-radius: 8px; font-size: 18px; }
-    .break { background: #ffebee; border-left: 5px solid #f44336; }
-    .back { background: #e8f5e9; border-left: 5px solid #4caf50; }
-    h1 { color: #333; }
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    .alert { padding: 15px; margin: 10px 0; border-radius: 8px; font-weight: bold; }
+    .break { background: #ffcccc; border-left: 6px solid red; }
+    .back { background: #ccffcc; border-left: 6px solid green; }
   </style>
 </head>
 <body>
@@ -17,25 +15,21 @@
   <div id="log"></div>
 
   <script>
-    const socket = io('https://break-tracker-socket.onrender.com');
-    
+    const socket = io('https://break-alerts-server.replit.app');
     socket.on('alert', data => {
       const div = document.createElement('div');
       div.className = 'alert ' + (data.status === 'break' ? 'break' : 'back');
-      div.innerHTML = `<strong>${data.name}</strong> is <b>${data.status === 'break' ? 'on' : 'back from'}</b> ${data.type} at ${data.time}`;
+      div.innerHTML = `${data.name} is <b>${data.status === 'break' ? 'on' : 'back from'}</b> ${data.type} at ${data.time}`;
       document.getElementById('log').prepend(div);
 
-      // Pop-up + sound
+      // Pop-up + Sound
       if (Notification.permission === "granted") {
-        new Notification(data.name + " is " + (data.status === 'break' ? 'on break' : 'back'), { body: data.type + " @ " + data.time });
+        new Notification(data.name + " Update", { body: div.innerText });
       }
-      const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-1053.mp3');
-      audio.play().catch(() => {});
+      new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-1053.mp3').play();
     });
 
-    if (Notification.permission === "default") {
-      Notification.requestPermission();
-    }
+    if (Notification.permission === "default") Notification.requestPermission();
   </script>
 </body>
 </html>
