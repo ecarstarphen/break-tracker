@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Break Alerts</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    .alert { padding: 15px; margin: 10px 0; border-radius: 8px; font-weight: bold; }
+    .break { background: #ffcccc; border-left: 6px solid red; }
+    .back { background: #ccffcc; border-left: 6px solid green; }
+  </style>
+</head>
+<body>
+  <h1>Live Break Alerts</h1>
+  <div id="log"></div>
+
+  <script>
+    const socket = io('https://break-alerts-server.replit.app');
+    socket.on('alert', data => {
+      const div = document.createElement('div');
+      div.className = 'alert ' + (data.status === 'break' ? 'break' : 'back');
+      div.innerHTML = `${data.name} is <b>${data.status === 'break' ? 'on' : 'back from'}</b> ${data.type} at ${data.time}`;
+      document.getElementById('log').prepend(div);
+
+      // Pop-up + Sound
+      if (Notification.permission === "granted") {
+        new Notification(data.name + " Update", { body: div.innerText });
+      }
+      new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-1053.mp3').play();
+    });
+
+    if (Notification.permission === "default") Notification.requestPermission();
+  </script>
+</body>
+</html>
